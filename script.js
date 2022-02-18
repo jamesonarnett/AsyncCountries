@@ -29,49 +29,41 @@ const renderCountry = (response, className = "") => {
   countriesContainer.style.opacity = 1;
 };
 
-const getCountryAndNeighbor = (country) => {
-  const request = new XMLHttpRequest();
-  request.open("GET", `https://restcountries.com/v3.1/name/${country}`);
-  request.send();
+// const getCountryAndNeighbor = (country) => {
+//   const request = new XMLHttpRequest();
+//   request.open("GET", `https://restcountries.com/v3.1/name/${country}`);
+//   request.send();
 
-  request.addEventListener("load", () => {
-    let [response] = JSON.parse(request.responseText);
-    console.log(response);
+//   request.addEventListener("load", () => {
+//     let [response] = JSON.parse(request.responseText);
+//     console.log(response);
 
-    renderCountry(response);
+//     renderCountry(response);
 
-    //Get neighbor country & render
+//     //Get neighbor country & render
 
-    const [neighbor] = response.borders;
-    if (!neighbor) return;
+//     const [neighbor] = response.borders;
+//     if (!neighbor) return;
 
-    const request2 = new XMLHttpRequest();
-    request2.open("GET", `https://restcountries.com/v3.1/alpha/${neighbor}`);
-    request2.send();
+//     const request2 = new XMLHttpRequest();
+//     request2.open("GET", `https://restcountries.com/v3.1/alpha/${neighbor}`);
+//     request2.send();
 
-    request2.addEventListener("load", () => {
-      let [response2] = JSON.parse(request2.responseText);
-      console.log(response2);
+//     request2.addEventListener("load", () => {
+//       let [response2] = JSON.parse(request2.responseText);
+//       console.log(response2);
 
-      renderCountry(response2, "neighbor");
-    });
-  });
+//       renderCountry(response2, "neighbor");
+//     });
+//   });
+// };
+
+// getCountryAndNeighbor("ireland");
+
+const getCountry = (country) => {
+  fetch("https://restcountries.com/v3.1/name/usa")
+    .then((response) => response.json())
+    .then((data) => renderCountry(data[0]));
 };
 
-setTimeout(() => {
-  console.log("1 second");
-  setTimeout(() => {
-    console.log("2 second");
-    setTimeout(() => {
-      console.log("3 second");
-      setTimeout(() => {
-        console.log("4 second");
-        setTimeout(() => {
-          console.log("Welcome to callback hell");
-        }, 1000);
-      }, 1000);
-    }, 1000);
-  }, 1000);
-}, 1000);
-
-getCountryAndNeighbor("ireland");
+getCountry("usa");
