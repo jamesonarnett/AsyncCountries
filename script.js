@@ -63,29 +63,65 @@ const renderCountry = (response, className = "") => {
 
 // getCountryAndNeighbor("ireland");
 
+// const getCountry = (country) => {
+//   fetch(`https://restcountries.com/v3.1/name/${country}`)
+//     .then((response => {
+//       console.log(response)
+//       if(!response.ok)
+//       throw new Error(`Country not found ${response.status}`)
+//     }))
+//     .then((data) => {
+//       renderCountry(data[0]);
+
+//       //neighboring country
+//       const neighbor = data[0].borders[0];
+//       if (!neighbor) return;
+//       return fetch(`https://restcountries.com/v3.1/alpha/${neighbor}`);
+//     })
+//     .then((response) => response.json())
+//     .then((data) => renderCountry(data[0], "neighbor"))
+//     .catch((err) => {
+//       console.log(err);
+//       renderErr(`Something went wrong... ${err.message}...Try again`);
+//     })
+//     .finally(() => {
+//       //load animations here
+//       countriesContainer.style.opacity = 1;
+//     });
+// };
+
+const getJson = (url, errorMsg = "Something went wrong") => {
+  return fetch(url).then((response) => {
+    if (!response.ok)
+      throw new Error(`${errorMsg}
+    (${response.status})`);
+
+    return response.json();
+  });
+};
+
 const getCountry = (country) => {
-  fetch(`https://restcountries.com/v3.1/name/${country}`)
-    .then((response) => response.json())
+  getJson(`https://restcountries.com/v3.1/name/${country}`, `Country not found`)
     .then((data) => {
       renderCountry(data[0]);
 
-      //neighboring country
       const neighbor = data[0].borders[0];
-      if (!neighbor) return;
-      return fetch(`https://restcountries.com/v3.1/alpha/${neighbor}`);
+      if (!neighbor) throw new Error("No Neighbor Found");
+
+      return getJson(
+        `https://restcountries.com/v3.1/alpha/${neighbor}`,
+        `Country not found`
+      );
     })
-    .then((response) => response.json())
     .then((data) => renderCountry(data[0], "neighbor"))
     .catch((err) => {
-      console.log(err);
       renderErr(`Something went wrong... ${err.message}...Try again`);
     })
     .finally(() => {
-      //load animations here
       countriesContainer.style.opacity = 1;
     });
 };
 
 btn.addEventListener("click", () => {
-  getCountry("ireland");
+  getCountry("usa");
 });
