@@ -122,6 +122,27 @@ const getCountry = (country) => {
     });
 };
 
-btn.addEventListener("click", () => {
-  getCountry("usa");
-});
+// btn.addEventListener("click", () => {
+//   getCountry("usa");
+// });
+
+const whereAmI = (lat, lon) => {
+  fetch(`https://geocode.xyz/${lat},${lon}?geoit=json`)
+    .then((r) => {
+      if (!r.ok)
+        throw new Error("Too many requests. Please make 1 per 1 second");
+
+      return r.json();
+    })
+    .then((data) => {
+      console.log(data);
+
+      getCountry(data.country);
+    })
+    .catch((err) => {
+      renderErr(`Something went wrong ${err.message}...Try again`);
+    });
+};
+
+// whereAmI(30.2266, -93.2174);
+whereAmI(19.037, 72.873);
