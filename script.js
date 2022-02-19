@@ -122,17 +122,18 @@ const getCountry = (country) => {
     });
 };
 
-// btn.addEventListener("click", () => {
-//   getCountry("usa");
-// });
+const whereAmI = () => {
+  getPosition()
+    .then((pos) => {
+      const { latitude: lat, longitude: lon } = pos.coords;
 
-const whereAmI = (lat, lon) => {
-  fetch(`https://geocode.xyz/${lat},${lon}?geoit=json`)
-    .then((r) => {
-      if (!r.ok)
+      return fetch(`https://geocode.xyz/${lat},${lon}?geoit=json`);
+    })
+    .then((res) => {
+      if (!res.ok)
         throw new Error("Too many requests. Please make 1 per 1 second");
 
-      return r.json();
+      return res.json();
     })
     .then((data) => {
       console.log(data);
@@ -145,4 +146,61 @@ const whereAmI = (lat, lon) => {
 };
 
 // whereAmI(30.2266, -93.2174);
-whereAmI(19.037, 72.873);
+// whereAmI(19.037, 72.873);
+
+const getPosition = () => {
+  return new Promise((resolve, reject) => {
+    // navigator.geolocation.getCurrentPosition(
+    //   (position) => resolve(position),
+    //   (err) => console.log(err)
+    // );
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+
+btn.addEventListener("click", whereAmI);
+
+// getPosition().then((pos) => console.log(pos));
+
+//Playing with the Event loop
+
+// console.log("Test Start");
+// setTimeout(() => console.log("0 sec timer"), 0);
+// Promise.resolve("Resolved Promise 1").then((res) => console.log(res));
+// console.log("Test end");
+
+// Promise.resolve("Resolved Promise 2").then((res) => {
+//   for (let i = 0; i < 10000000000; i++) {}
+//   console.log(res);
+// });
+
+// do you know the order they print?
+
+// const lottery = new Promise((resolve, reject) => {
+//   console.log("Time for the lottery!");
+//   setTimeout(() => {
+//     if (Math.random() >= 0.5) {
+//       resolve("You win!");
+//     } else {
+//       reject(new Error("You lose!"));
+//     }
+//   }, 2000);
+// });
+
+// lottery.then((res) => console.log(res)).catch((err) => console.log(err));
+
+// // Promisifying setTimeout
+// const wait = (seconds) => {
+//   return new Promise((resolve) => {
+//     setTimeout(resolve, seconds * 1000);
+//   });
+// };
+
+// wait(2)
+//   .then(() => {
+//     console.log("I waited 2 seconds");
+//     return wait(1);
+//   })
+//   .then(() => {
+//     console.log("I waited 3 seconds");
+//   });
