@@ -7,6 +7,7 @@ const countriesContainer = document.querySelector(".countries");
 
 const renderErr = (msg) => {
   countriesContainer.insertAdjacentText("beforeend", msg);
+  countriesContainer.style.opacity = 1;
 };
 
 const renderCountry = (response, className = "") => {
@@ -254,19 +255,39 @@ const getPosition = () => {
 };
 
 const whereAmI = async function () {
-  const pos = await getPosition();
-  const { latitude: lat, longitude: lon } = pos.coords;
+  try {
+    const pos = await getPosition();
+    const { latitude: lat, longitude: lon } = pos.coords;
 
-  const resGeoCode = await fetch(
-    `https://geocode.xyz/${lat},${lon}?geoit=json`
-  );
-  const dataGeo = await resGeoCode.json();
-  console.log(dataGeo);
+    const resGeoCode = await fetch(
+      `https://geocode.xyz/${lat},${lon}?geoit=json`
+    );
+    if (!resGeoCode.ok)
+      throw new Error(
+        `Could not fetch location data. Please allow location tracking.`
+      );
+    const dataGeo = await resGeoCode.json();
+    console.log(dataGeo);
 
-  const res = await fetch(
-    `https://restcountries.com/v3.1/name/${dataGeo.country}`
-  );
-  const data = await res.json();
-  renderCountry(data[0]);
+    const res = await fetch(
+      `https://restcountries.com/v3.1/name/${dataGeo.country}`
+    );
+    const data = await res.json();
+    renderCountry(data[0]);
+
+    return `You are in ${dataGeo.city}, ${dataGeo.country}`;
+  } catch (err) {
+    renderErr(`${err.message}`);
+  }
 };
-btn.addEventListener("click", whereAmI());
+
+(async function () {
+  try {
+    const city = await whereAmI();
+    console.log(`2: ${city}`);
+  } catch (err) {
+    console.log(`2: ${err.message}`);
+  }
+
+  console.log(`3: Finished getting location`);
+})();
