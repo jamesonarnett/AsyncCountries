@@ -28,7 +28,7 @@ const renderCountry = (response, className = "") => {
   </div>
   </article>
 `;
-
+  countriesContainer.style.opacity = 1;
   countriesContainer.insertAdjacentHTML("beforeend", html);
 };
 
@@ -90,75 +90,73 @@ const renderCountry = (response, className = "") => {
 //     });
 // };
 
-const getJson = (url, errorMsg = "Something went wrong") => {
-  return fetch(url).then((response) => {
-    if (!response.ok)
-      throw new Error(`${errorMsg}
-    (${response.status})`);
+// const getJson = (url, errorMsg = "Something went wrong") => {
+//   return fetch(url).then((response) => {
+//     if (!response.ok)
+//       throw new Error(`${errorMsg}
+//     (${response.status})`);
 
-    return response.json();
-  });
-};
+//     return response.json();
+//   });
+// };
 
-const getCountry = (country) => {
-  getJson(`https://restcountries.com/v3.1/name/${country}`, `Country not found`)
-    .then((data) => {
-      renderCountry(data[0]);
+// const getCountry = (country) => {
+//   getJson(`https://restcountries.com/v3.1/name/${country}`, `Country not found`)
+//     .then((data) => {
+//       renderCountry(data[0]);
 
-      const neighbor = data[0].borders[0];
-      if (!neighbor) throw new Error("No Neighbor Found");
+//       const neighbor = data[0].borders[0];
+//       if (!neighbor) throw new Error("No Neighbor Found");
 
-      return getJson(
-        `https://restcountries.com/v3.1/alpha/${neighbor}`,
-        `Country not found`
-      );
-    })
-    .then((data) => renderCountry(data[0], "neighbor"))
-    .catch((err) => {
-      renderErr(`Something went wrong... ${err.message}...Try again`);
-    })
-    .finally(() => {
-      countriesContainer.style.opacity = 1;
-    });
-};
+//       return getJson(
+//         `https://restcountries.com/v3.1/alpha/${neighbor}`,
+//         `Country not found`
+//       );
+//     })
+//     .then((data) => renderCountry(data[0], "neighbor"))
+//     .catch((err) => {
+//       renderErr(`Something went wrong... ${err.message}...Try again`);
+//     })
+//     .finally(() => {
+//       countriesContainer.style.opacity = 1;
+//     });
+// };
 
-const whereAmI = () => {
-  getPosition()
-    .then((pos) => {
-      const { latitude: lat, longitude: lon } = pos.coords;
+// const whereAmI = () => {
+//   getPosition()
+//     .then((pos) => {
+//       const { latitude: lat, longitude: lon } = pos.coords;
 
-      return fetch(`https://geocode.xyz/${lat},${lon}?geoit=json`);
-    })
-    .then((res) => {
-      if (!res.ok)
-        throw new Error("Too many requests. Please make 1 per 1 second");
+//       return fetch(`https://geocode.xyz/${lat},${lon}?geoit=json`);
+//     })
+//     .then((res) => {
+//       if (!res.ok)
+//         throw new Error("Too many requests. Please make 1 per 1 second");
 
-      return res.json();
-    })
-    .then((data) => {
-      console.log(data);
+//       return res.json();
+//     })
+//     .then((data) => {
+//       console.log(data);
 
-      getCountry(data.country);
-    })
-    .catch((err) => {
-      renderErr(`Something went wrong ${err.message}...Try again`);
-    });
-};
+//       getCountry(data.country);
+//     })
+//     .catch((err) => {
+//       renderErr(`Something went wrong ${err.message}...Try again`);
+//     });
+// };
 
 // whereAmI(30.2266, -93.2174);
 // whereAmI(19.037, 72.873);
 
-const getPosition = () => {
-  return new Promise((resolve, reject) => {
-    // navigator.geolocation.getCurrentPosition(
-    //   (position) => resolve(position),
-    //   (err) => console.log(err)
-    // );
-    navigator.geolocation.getCurrentPosition(resolve, reject);
-  });
-};
-
-btn.addEventListener("click", whereAmI);
+// const getPosition = () => {
+//   return new Promise((resolve, reject) => {
+//     // navigator.geolocation.getCurrentPosition(
+//     //   (position) => resolve(position),
+//     //   (err) => console.log(err)
+//     // );
+//     navigator.geolocation.getCurrentPosition(resolve, reject);
+//   });
+// };
 
 // getPosition().then((pos) => console.log(pos));
 
@@ -205,46 +203,70 @@ btn.addEventListener("click", whereAmI);
 //     console.log("I waited 3 seconds");
 //   });
 
-const imgContainer = document.querySelector(".images");
+// const imgContainer = document.querySelector(".images");
 
-const wait = (seconds) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, seconds * 1000);
-  });
-};
+// const wait = (seconds) => {
+//   return new Promise((resolve) => {
+//     setTimeout(resolve, seconds * 1000);
+//   });
+// };
 
-const createImg = (imgPath) => {
+// const createImg = (imgPath) => {
+//   return new Promise((resolve, reject) => {
+//     const img = document.createElement("img");
+//     img.src = imgPath;
+
+//     img.addEventListener("load", () => {
+//       imgContainer.append(img);
+//       resolve(img);
+//     });
+
+//     img.addEventListener("error", () => {
+//       reject(new Error("Image not found"));
+//     });
+//   });
+// };
+
+// let currentImg;
+
+// createImg("img/img-1.jpg")
+//   .then((img) => {
+//     currentImg = img;
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImg.style.display = "none";
+//     return createImg("img/img-2.jpg");
+//   })
+//   .then((img) => {
+//     currentImg = img;
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImg.style.display = "none";
+//   })
+//   .catch((err) => console.log(err));
+
+const getPosition = () => {
   return new Promise((resolve, reject) => {
-    const img = document.createElement("img");
-    img.src = imgPath;
-
-    img.addEventListener("load", () => {
-      imgContainer.append(img);
-      resolve(img);
-    });
-
-    img.addEventListener("error", () => {
-      reject(new Error("Image not found"));
-    });
+    navigator.geolocation.getCurrentPosition(resolve, reject);
   });
 };
 
-let currentImg;
+const whereAmI = async function () {
+  const pos = await getPosition();
+  const { latitude: lat, longitude: lon } = pos.coords;
 
-createImg("img/img-1.jpg")
-  .then((img) => {
-    currentImg = img;
-    return wait(2);
-  })
-  .then(() => {
-    currentImg.style.display = "none";
-    return createImg("img/img-2.jpg");
-  })
-  .then((img) => {
-    currentImg = img;
-    return wait(2);
-  })
-  .then(() => {
-    currentImg.style.display = "none";
-  })
-  .catch((err) => console.log(err));
+  const resGeoCode = await fetch(
+    `https://geocode.xyz/${lat},${lon}?geoit=json`
+  );
+  const dataGeo = await resGeoCode.json();
+  console.log(dataGeo);
+
+  const res = await fetch(
+    `https://restcountries.com/v3.1/name/${dataGeo.country}`
+  );
+  const data = await res.json();
+  renderCountry(data[0]);
+};
+btn.addEventListener("click", whereAmI());
